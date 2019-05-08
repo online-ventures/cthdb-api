@@ -5,6 +5,7 @@ volumes:
   bundle-cache:
 services:
   rails:
+    container_name: cthdb_rails
     image: cthdb/api
     environment:
     - RAILS_ENV=development
@@ -25,7 +26,8 @@ services:
     build:
       context: .
       dockerfile: ./config/docker/dev/Dockerfile
-    image: api/rails
+    container_name: cthdb_sidekiq
+    image: cthdb/api
     command: bundle exec sidekiq
     environment:
       - RAILS_ENV=development
@@ -39,12 +41,14 @@ services:
       - .:/app
       - bundle-cache:/bundle
   db:
+    container_name: cthdb_db
     image: postgres
     volumes:
       - postgres-data:/var/lib/postgresql/data
     ports:
       - "5485:5432"
   redis:
+    container_name: cthdb_redis
     image: redis
     volumes:
       - redis-data:/data
