@@ -35,7 +35,7 @@ steps:
   - kms
   - decrypt
   - --ciphertext-file=config/cloudbuild/token.enc
-  - --plaintext-file=/root/.profile
+  - --plaintext-file=/root/env
   - --location=global
   - --keyring=cloud-build
   - --key=digital-ocean-access-key
@@ -44,26 +44,28 @@ steps:
     path: /root
 
 # Set up kubectl
-- name: 'gcr.io/cloud-builders/curl'
-  args: [
-    '-X', 'GET',
-    'http://api.digitalocean.com/v2/clusters/$CLUSTER_ID/kubeconfig',
-    '-H', 'Authorization: Bearer $TOKEN',
-    '>', '/root/.kube/config']
+- name: 'gcr.io/web-online-ventures/curl'
+  args: ['bash', 'config/cloudbuild/curl-config']
   volumes:
   - name: 'home'
     path: /root
-  - name: 'kube'
-    path: /root/.kube
+  - name: '1001'
+    path: /home/1001
 
 # Update cluster pods
-- name: 'gcr.io/cloud-builders/kubectl'
+- name: 'bitnami/kubectl'
   args:
+    - '--kubeconfig'
+    - '/home/1001/kube'
     - 'set'
     - 'image'
     - 'deploy/$_APP_NAME'
-    - 'app=gcr.io/$PROJECT_ID/$_APP_NAME:$COMMIT_SHA'
+    - 'rails=gcr.io/$PROJECT_ID/$_APP_NAME:$COMMIT_SHA'
+    - 'sidekiq=gcr.io/$PROJECT_ID/$_APP_NAME:$COMMIT_SHA'
     - '--namespace=default'
+  volumes:
+  - name: '1001'
+    path: /home/1001
 
 # Save this build as well according to commit sha
 images:

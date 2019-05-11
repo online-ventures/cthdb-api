@@ -1,40 +1,24 @@
-FROM ruby:2.6.1
+FROM nginx
 
-RUN apt-get update -qq && apt-get install -y build-essential
+# Install dependencies
+RUN apt-get update -qq && apt-get -y install apache2-utils
 
-# for postgres
-RUN apt-get install -y libpq-dev
+# establish where Nginx should look for files
+ENV RAILS_ROOT /var/www/html
 
-# for nokogiri
-RUN apt-get install -y libxml2-dev libxslt1-dev
+# Set our working directory inside the image
+WORKDIR $RAILS_ROOT
 
-# for a JS runtime
-# https://github.com/nodesource/distributions#installation-instructions
-RUN curl -sL https://deb.nodesource.com/setup_10.x | bash - \
-        && apt-get install -y nodejs
+# Copy Nginx config template
+COPY config/docker/web/nginx.conf /etc/nginx/conf.d/default.conf
 
-# an editor
-RUN apt-get install -y vim
+# Pipe logging to stdout
+RUN ln -sf /dev/stdout /var/log/nginx/access.log
 
-# app directory
-ENV APP_HOME /app
-RUN mkdir $APP_HOME
-WORKDIR $APP_HOME
+# And error logging to stderr
+RUN ln -sf /dev/stderr /var/log/nginx/error.log
 
-# Production build
-ENV RAILS_ENV production
-ENV RACK_ENV production
+EXPOSE 80
 
-# setup bundler
-COPY Gemfile* $APP_HOME/
-RUN bundle install --jobs 10 --retry 5 --without development test
-
-# Document what port should be exposed
-EXPOSE 3000
-
-# Entrypoint
-COPY ./docker/app/entrypoint.sh /usr/local/bin
-ENTRYPOINT ["entrypoint.sh"]
-
-# App files
-COPY . $APP_HOME
+# Use the "exec" form of CMD so Nginx shuts down gracefully on SIGTERM (i.e. `docker stop`)
+CMD [ "nginx", "-g", "daemon off;" ]
