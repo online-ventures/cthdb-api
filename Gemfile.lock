@@ -83,6 +83,7 @@ GIT
 GEM
   remote: https://rubygems.org/
   specs:
+    active_record_query_trace (1.6.2)
     awesome_print (1.8.0)
     bootsnap (1.4.4)
       msgpack (~> 1.0)
@@ -169,6 +170,7 @@ PLATFORMS
   ruby
 
 DEPENDENCIES
+  active_record_query_trace
   awesome_print
   bootsnap (>= 1.1.0)
   byebug
