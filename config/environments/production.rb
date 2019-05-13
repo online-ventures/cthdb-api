@@ -97,7 +97,7 @@ Rails.application.configure do
   # CORS for production
   config.middleware.insert_before 0, Rack::Cors do
     allow do
-      origins '*.wov.io'
+      origins 'cth.wov.io'
       resource '*', headers: :any, methods: [:get, :post, :patch, :delete, :options]
     end
   end
