@@ -13,7 +13,7 @@ JSONAPI.configure do |config|
   config.allow_sort = true
   config.allow_filter = true
 
-  config.raise_if_parameters_not_allowed = true
+  config.raise_if_parameters_not_allowed = false
 
   # :none, :offset, :paged, or a custom paginator name
   config.default_paginator = :none
