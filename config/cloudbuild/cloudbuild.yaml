@@ -59,7 +59,7 @@ steps:
     - '/home/1001/kube'
     - 'set'
     - 'image'
-    - 'deploy/$_APP_NAME'
+    - 'deploy/cthdb'
     - 'rails=gcr.io/$PROJECT_ID/$_APP_NAME:$COMMIT_SHA'
     - 'sidekiq=gcr.io/$PROJECT_ID/$_APP_NAME:$COMMIT_SHA'
     - '--namespace=default'
