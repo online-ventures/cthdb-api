@@ -4,8 +4,8 @@ volumes:
   redis-data:
   bundle-cache:
 services:
-  rails:
-    container_name: cthdb_rails
+  web:
+    container_name: cthdb_web
     image: cthdb/api
     environment:
     - RAILS_ENV=development
